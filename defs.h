@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct ticketlock;
 
 // bio.c
 void            binit(void);
@@ -116,6 +117,7 @@ void            procdump(void);
 void            scheduler(void) __attribute__((noreturn));
 void            sched(void);
 void            setproc(struct proc*);
+void            sleep_t(void*, struct ticketlock*);
 void            sleep(void*, struct spinlock*);
 void            userinit(void);
 int             wait(void);
@@ -156,6 +158,12 @@ int             argstr(int, char**);
 int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
 void            syscall(void);
+
+// ticketlock.c
+void            acquireTicketlock(struct ticketlock*);
+void            initTicketlock(struct ticketlock*, char*);
+void            releaseTicketlock(struct ticketlock*);
+int             holdingTicketlock(struct ticketlock*);
 
 // timer.c
 void            timerinit(void);
