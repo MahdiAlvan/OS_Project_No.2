@@ -10,7 +10,7 @@
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
-  struct priority[NPROC];
+  int priority[NPROC];
 } ptable;
 
 static struct proc *initproc;
