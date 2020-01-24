@@ -31,32 +31,39 @@ acquireTicketlock(struct spinlock *lk)
         panic("acquire");
     ticket = fetch_and_add(&lk->ticket, 1);
     while (lk->turn != ticket)
-        give
+        givepriority(lk->proc);
+    
+    lk->cpu = cpu;
+    lk->proc = proc;
+    getcallerpcs(&lk, lk->pcs);
 }
 
 // Release the lock.
 void
-release(struct spinlock *lk)
+releaseTicketlock(struct ticketlock *lk)
 {
-    if(!holding(lk))
+    if(!holdingTicketlock(lk))
         panic("release");
 
     lk->pcs[0] = 0;
     lk->cpu = 0;
+    lk->proc;
 
     // Tell the C compiler and the processor to not move loads or stores
     // past this point, to ensure that all the stores in the critical
     // section are visible to other cores before the lock is released.
     // Both the C compiler and the hardware may re-order loads and
     // stores; __sync_synchronize() tells them both not to.
-    __sync_synchronize();
+    // __sync_synchronize();
 
     // Release the lock, equivalent to lk->locked = 0.
     // This code can't use a C assignment, since it might
     // not be atomic. A real OS would use C atomics here.
-    asm volatile("movl $0, %0" : "+m" (lk->locked) : );
-
-    popcli();
+    // asm volatile("movl $0, %0" : "+m" (lk->locked) : );
+    lk->turn++;
+    wakeup(lk);
+    resetpriority();
+    // popcli();
 }
 
 // Record the current call stack in pcs[] by following the %ebp chain.
