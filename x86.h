@@ -147,12 +147,12 @@ lcr3(uint val)
 static inline int
 fetch_and_add(int *var, int value)
 {
-    asm volatile("lock; xaddl %0, %1"
+  asm volatile("lock; xaddl %0, %1"
     : "+r" (value), "+m" (+var)
     :
     : "memory"
-    );
-    return value;
+  );
+  return value;
 }
 
 //PAGEBREAK: 36
