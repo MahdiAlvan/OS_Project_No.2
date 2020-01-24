@@ -70,9 +70,9 @@ void
 givepriority(struct proc *p)
 {
   acquire(&ptable.lock);
-  if(p->priority < proc->priority) {
+  if(p->priority < ptable.proc->priority) {
     cprintf("[%d] inherited priority %d from %d\n", p->priority, proc->priority, p->pid);
-    p->priority = proc->priority;
+    p->priority = ptable.proc->priority;
   }
   release(&ptable.lock);
 }
@@ -81,9 +81,9 @@ void
 resetpriority()
 {
   acquire(&ptable.lock);
-  if(proc->priority != proc->basepriority) {
-    cprintf("[%d] priority restored to %d from inherited %d\n", proc->pid, proc->basepriority, proc->priority);
-    proc->priority = proc->basepriority;
+  if(ptable.proc->priority != ptable.proc->basepriority) {
+    cprintf("[%d] priority restored to %d from inherited %d\n", ptable.proc->pid, ptable.proc->basepriority, ptable.proc->priority);
+    ptable.proc->priority = ptable.proc->basepriority;
   }
   release(&ptable.lock);
 }
