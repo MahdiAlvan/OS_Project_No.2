@@ -77,6 +77,17 @@ givepriority(struct proc *p)
   release(&ptable.lock);
 }
 
+void
+resetpriority()
+{
+  acquire(&ptable.lock);
+  if(proc->priority != proc->basepriority) {
+    cprintf("[%d] priority restored to %d from inherited %d\n", proc->pid, proc->basepriority, proc->priority);
+    proc->priority = proc->basepriority;
+  }
+  release(&ptable.lock);
+}
+
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
