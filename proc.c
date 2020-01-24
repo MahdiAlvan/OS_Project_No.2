@@ -10,6 +10,7 @@
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
+  struct priority[NPROC];
 } ptable;
 
 static struct proc *initproc;
@@ -63,6 +64,17 @@ myproc(void) {
   p = c->proc;
   popcli();
   return p;
+}
+
+void
+givepriority(struct proc *p)
+{
+  acquire(&ptable.lock);
+  if(p->priority < proc->priority) {
+    cprintf("[%d] inherited priority %d from %d\n", p->priority, proc->priority, p->pid);
+    p->priority = proc->priority;
+  }
+  release(&ptable.lock);
 }
 
 //PAGEBREAK: 32
